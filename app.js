@@ -6,22 +6,20 @@ const mongoose = require('mongoose')
 dotenv.config();
 const postRoute = require('./routes/post.route.js');
 const authRoute = require('./routes/auth.route.js');
+const testRoute = require('./routes/test.route.js');
 const userRoute = require('./routes/userRoute.js');
-// const testRoute = require('./routes/test.route.js');
 
 
 const app = express();
 
-app.use(cors({origin: process.env.CLIENT_URL, credentials:true
-
-}));
+app.use(cors({origin: process.env.CLIENT_URL, credentials:true}));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/backend/users", userRoute);
-app.use("/posts", postRoute);
 app.use("/backend/auth", authRoute);
-app.use("/auth", authRoute);
+app.use("/backend/users", userRoute);
+app.use("/backend/posts", postRoute);
+app.use("/backend/test", testRoute);
 
   
     
