@@ -1,74 +1,76 @@
-const mongoose =require ('mongoose');
-const bcrypt = require ('bcryptjs');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const User = require('../Models/userModel');
 
 exports.getUsers = async (req, res) => {
-   try {
-       const users = await User.findUnique();
-       res.status(500).json(users);
-   } catch (err) {
-       console.log(err);
-       res.status(500).json({message:"failed to get users"});
-   };};
+	// fetch all users (omit passwords)
+	try {
+		const users = await User.find().select('-password');
+		return res.status(200).json(users);
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({ message: "failed to get users" });
+	}
+};
 
 exports.getUser = async (req, res) => {
-    const id = req.params.id;
-try { 
-       const users = await User.find({
-        where:{ id },
-       });
-       res.status(500).json(users);
-   } catch (err) {
-       console.log(err);
-       res.status(500).json({message:"failed to get user"});
-   };};
+	try {
+		const id = req.params.id;
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ message: "Invalid user id" });
+		}
+		const user = await User.findById(id).select('-password');
+		if (!user) return res.status(404).json({ message: "User not found" });
+		return res.status(200).json(user);
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({ message: "failed to get user" });
+	}
+};
 
-  
 exports.updateUser = async (req, res) => {
-    const { id } = req.params.id;
-    const tokenUserId = req.userId;
-    const {password, avatar, ...inputs} =req.body;
+	try {
+		const id = req.params.id;
+		const tokenUserId = req.userId;
+		if (!id || id !== tokenUserId) {
+			return res.status(403).json({ message: "Not Authorized!" });
+		}
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ message: "Invalid user id" });
+		}
 
-    if (id !== tokenUserId){
-        return res.status(403).json({message: "Not Authorized!"});
-    };
-    let updatePassword = null;
-    try {  
-       
-        if(password){
-            updatePassword = await bcrypt.hash(password)
-        }
-        
-        const updateUser = await User.user.update({
-            where:{ id },
-            data: { ...inputs, 
-            ...(updatePassword && { password: updatePassword}),
-            ...(avatar && {avatar }),
-            },       
-        });
-      const {password: userPassword, ...rest} = updateUser
+		const { password, avatar, ...inputs } = req.body;
+		const updateData = { ...inputs };
+		if (typeof avatar !== 'undefined') updateData.avatar = avatar;
+		if (password) {
+			updateData.password = await bcrypt.hash(password, 10);
+		}
 
-        res.status(200).json(rest);
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ message: "Failed to update users" });
-    }
-}; 
+		const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true }).select('-password');
+		if (!updatedUser) return res.status(404).json({ message: "User not found" });
+		return res.status(200).json(updatedUser);
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({ message: "Failed to update user" });
+	}
+};
 
 exports.deleteUser = async (req, res) => {
-const { id } = req.params.id;
-    const tokenUserId = req.userId;
+	try {
+		const id = req.params.id;
+		const tokenUserId = req.userId;
+		if (!id || id !== tokenUserId) {
+			return res.status(403).json({ message: "Not Authorized!" });
+		}
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ message: "Invalid user id" });
+		}
 
-    if (id !== tokenUserId){
-        return res.status(403).json({message: "Not Authorized!"});
-    };
-try {
-   await User.user.delete({
-    where: { id }
-   });
-   res.status(200).json({message:"User deleted"});
-    
-} catch (err) {
-console.log(err);
-res.status(500).json({message: "Failed to delete users"});    
-};};
+		const deleted = await User.findByIdAndDelete(id);
+		if (!deleted) return res.status(404).json({ message: "User not found" });
+		return res.status(200).json({ message: "User deleted" });
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({ message: "Failed to delete users" });
+	}
+};
