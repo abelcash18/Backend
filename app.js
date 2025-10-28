@@ -7,7 +7,7 @@ dotenv.config();
 const postRoute = require('./routes/post.route.js');
 const authRoute = require('./routes/auth.route.js');
 const testRoute = require('./routes/test.route.js');
-const userRoute = require('./routes/userRoute.js');
+const userRoute = require('./routes/user.route.js');
 
 
 const app = express();
@@ -22,10 +22,34 @@ app.use("/backend/posts", postRoute);
 app.use("/backend/test", testRoute);
 
   
+
+app.post('/auth/register', (req, res) => {
+  // registration logic here
+  res.status(200).send('User registered');
+});
+
+app.post('/auth/login', (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Missing credentials' });
+  }
+  // Continue with login logic...
+});
+
+
+
+
+
+
+
+
+
+
+
     
-  app.use("/backend/auth/register", (req, res)=>{
-      res.send("It works!")
- });
+//app.use("/auth/register", (req, res)=>{
+  //    res.send("It works!")
+ //});
 
 
 
