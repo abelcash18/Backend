@@ -32,7 +32,8 @@ exports.updateUser = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const tokenUserId = req.userId;
-		if (!id || id !== tokenUserId) {
+		// Allow user to update their own account or allow admins to update any account
+		if (!id || (id !== tokenUserId && !req.isAdmin)) {
 			return res.status(403).json({ message: "Not Authorized!" });
 		}
 		if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -59,7 +60,8 @@ exports.deleteUser = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const tokenUserId = req.userId;
-		if (!id || id !== tokenUserId) {
+		// Allow user to delete their own account or allow admins to delete any account
+		if (!id || (id !== tokenUserId && !req.isAdmin)) {
 			return res.status(403).json({ message: "Not Authorized!" });
 		}
 		if (!mongoose.Types.ObjectId.isValid(id)) {

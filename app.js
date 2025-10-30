@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/backend/auth", authRoute);
-app.use("/backend/users", userRoute);
+app.use("/users", userRoute);
 app.use("/backend/posts", postRoute);
 app.use("/backend/test", testRoute);
 
@@ -47,7 +47,7 @@ app.post('/auth/login', async(req, res) => {
   }
   try {
     let user = await User.findOne({ email})
-    if (!user){
+    if (!user){ 
     return res.status(404).json({ message: 'User not found' });
     } else {
       let isMatch = await bcrypt.compare(password, user.password)
@@ -67,7 +67,7 @@ app.post('/auth/login', async(req, res) => {
 
 
 
-app.get('/auth/logout', (req, res) => {
+app.post('/auth/logout', (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
