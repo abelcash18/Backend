@@ -8,6 +8,7 @@ const postRoute = require('./routes/post.route.js');
 const authRoute = require('./routes/auth.route.js');
 const testRoute = require('./routes/test.route.js');
 const userRoute = require('./routes/user.route.js');
+const User = require('./Models/userModel.js');
 
 
 const app = express();
@@ -26,7 +27,7 @@ app.use("/backend/test", testRoute);
 app.get('/auth/register', (req, res) => {
   // registration logic here
   res.status(200).send('User registered');
-});
+}); 
 
 
 app.post('/auth/profile', (req, res) => {
@@ -38,12 +39,25 @@ app.post('/auth/profile', (req, res) => {
 });
 
 
-app.post('/auth/login', (req, res) => {
+app.post('/auth/login', async(req, res) => {
   const { email, password } = req.body;
+  console.log(req.body)
   if (!email || !password) {
     return res.status(400).json({ message: 'Missing credentials' });
   }
   try {
+    let user = await User.findOne({ email})
+    if (!user){
+    return res.status(404).json({ message: 'User not found' });
+    } else {
+      let isMatch = await bcrypt.compare(password, user.password)
+      if(!isMatch){
+    return res.status(401).json({ message: 'Invalid credentials' });
+      } else {
+    return res.status(200).json({ message: 'Login very successful', user });
+
+      }
+    }
     res.status(200).json({ message: 'Login successful' });
   } catch (err) {
     console.error(err);
@@ -53,8 +67,7 @@ app.post('/auth/login', (req, res) => {
 
 
 
-app.get('/backend/auth/logout', (req, res) => {
-  // logout logic
+app.get('/auth/logout', (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 });
 

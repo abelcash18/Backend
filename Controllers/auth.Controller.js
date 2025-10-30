@@ -1,6 +1,7 @@
 const bcrypt = require ('bcryptjs');
 const jwt = require ('jsonwebtoken');
 const User = require('../Models/userModel.js')
+const property = require('../Models/propertyModel.js')
 
 
 const JWT_EXPIRES_DAYS = 7;
@@ -57,7 +58,7 @@ exports.login = async (req, res) => {
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
         });
-        return res.status(200).json({message: 'Login successfully'});
+        return res.status(200).json({message: 'Login successfully', user, token});
     } catch (err) {
         console.error("Login error:", err);
         return res.status(500).json({ message: "Failed to login" });
