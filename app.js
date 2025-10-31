@@ -22,6 +22,19 @@ app.use("/users", userRoute);
 app.use("/backend/posts", postRoute);
 app.use("/backend/test", testRoute);
 
+
+
+app.post('/contact', (req, res) => {
+  const { name, email, message } = req.body;
+  if (!name || !email || !message) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+  // Process the contact form submission (e.g., save to database, send email)
+  res.status(200).json({ message: 'Contact form submitted successfully' });
+  
+});
+
+
   
 
 app.get('/auth/register', (req, res) => {
