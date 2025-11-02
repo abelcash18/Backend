@@ -31,7 +31,7 @@ app.post('/contact', (req, res) => {
   }
   // Process the contact form submission (e.g., save to database, send email)
   res.status(200).json({ message: 'Contact form submitted successfully' });
-  
+
 });
 
 
