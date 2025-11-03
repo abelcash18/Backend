@@ -1,6 +1,5 @@
 const express = require('express');
 const  {verifyToken} = require("../Middleware/verifyToken.js");
-const {getUser, getUsers, updateUser, deleteUser} = require("../Controllers/auth.controller.js");
 const userController = require('../Controllers/user.controller');
 
 

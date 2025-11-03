@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../Models/userModel');
 
 exports.getUsers = async (req, res) => {
-	// fetch all users (omit passwords)
 	try {
 		const users = await User.find().select('-password');
 		return res.status(200).json(users);
