@@ -7,7 +7,7 @@ const userController = require('../Controllers/user.controller');
 const router = express.Router();
 
 router.get("/", userController.getUsers);
-router.get("/:id", verifyToken,userController.getUser);
+router.get("/:id",userController.getUser);
 router.put("/:id", verifyToken, userController.updateUser);
 router.delete("/:id", verifyToken, userController.deleteUser);
 
