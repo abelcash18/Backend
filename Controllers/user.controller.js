@@ -69,13 +69,12 @@ exports.updateUser = async (req, res) => {
 
         console.log('Update Data:', updateData);
 
-        // Use findByIdAndUpdate with proper options
         const updatedUser = await User.findByIdAndUpdate(
             id, 
             { $set: updateData }, 
             { 
-                new: true, // Return updated document
-                runValidators: true, // Run model validators
+                new: true, 
+                runValidators: true, 
                 context: 'query'
             }
         ).select('-password');
@@ -90,7 +89,7 @@ exports.updateUser = async (req, res) => {
     } catch (err) {
         console.error('Update User Error:', err);
         
-        // Handle duplicate key errors
+       
         if (err.code === 11000) {
             const field = Object.keys(err.keyValue)[0];
             return res.status(400).json({ 
@@ -98,8 +97,7 @@ exports.updateUser = async (req, res) => {
             });
         }
         
-        // Handle validation errors
-        if (err.name === 'ValidationError') {
+          if (err.name === 'ValidationError') {
             const messages = Object.values(err.errors).map(error => error.message);
             return res.status(400).json({ 
                 message: messages.join(', ') 
