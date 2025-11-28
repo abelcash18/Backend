@@ -87,7 +87,8 @@ function generateMockCoordinates(city) {
         'paris': { latitude: 48.8566, longitude: 2.3522 },
         'berlin': { latitude: 52.5200, longitude: 13.4050 },
         'tokyo': { latitude: 35.6762, longitude: 139.6503 },
-        'sydney': { latitude: -33.8688, longitude: 151.2093 }
+        'sydney': { latitude: -33.8688, longitude: 151.2093 },
+        
     };
 
     const normalizedCity = city.toLowerCase().trim();
