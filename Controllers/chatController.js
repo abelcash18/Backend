@@ -283,8 +283,7 @@ exports.sendOwnerMessage = async (req, res) => {
 
     await chat.save();
 
-    // Emit real-time message to client
-    if (req.io) {
+     if (req.io) {
       req.io.to(chat.clientId).emit('newMessage', {
         chatId: chat._id,
         message: chat.messages[chat.messages.length - 1]
