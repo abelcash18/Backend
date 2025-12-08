@@ -12,7 +12,7 @@ const messageSchema = new mongoose.Schema({
     required: true
   },
   clientId: {
-    type: String, // Can be session ID or temporary ID for non-logged in users
+    type: String, 
     required: true
   },
   isRead: {
@@ -35,7 +35,7 @@ const chatSchema = new mongoose.Schema({
     required: true
   },
   clientId: {
-    type: String, // Session ID for non-logged in users
+    type: String, 
     required: true
   },
   clientName: {
@@ -59,7 +59,6 @@ const chatSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for faster queries
 chatSchema.index({ propertyId: 1, clientId: 1 });
 chatSchema.index({ ownerId: 1, lastActivity: -1 });
 chatSchema.index({ clientId: 1 });

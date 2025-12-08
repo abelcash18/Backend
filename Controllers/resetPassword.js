@@ -14,8 +14,7 @@ exports.forgotPassword = async (req, res) => {
     try {
         const user = await User.findOne({ email });
         
-        // For security, don't reveal if email exists or not
-        const successMessage = "If an account with that email exists, we've sent password reset instructions.";
+            const successMessage = "If an account with that email exists, we've sent password reset instructions.";
 
         if (!user) {
             console.log(`Password reset requested for non-existent email: ${email}`);
@@ -24,29 +23,25 @@ exports.forgotPassword = async (req, res) => {
             });
         }
 
-        // Generate reset token
+     
         const resetToken = crypto.randomBytes(32).toString('hex');
         const tokenExpiry = Date.now() + 3600000; // 1 hour from now
 
-        // Store token in database
-        user.resetPasswordToken = resetToken;
+           user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = tokenExpiry;
         await user.save();
 
-        // Send email
-        let emailResult;
+           let emailResult;
         if (process.env.NODE_ENV === 'production') {
             emailResult = await sendPasswordResetEmail(user.email, user.username, resetToken);
         } else {
-            // Use test service in development
-            emailResult = await sendTestEmail(user.email, user.username, resetToken);
+           emailResult = await sendTestEmail(user.email, user.username, resetToken);
         }
 
         console.log(`Password reset email processed for: ${user.email}`);
         
         return res.status(200).json({ 
             message: successMessage,
-            // In development, return preview URL and token for testing
             ...(process.env.NODE_ENV !== 'production' && emailResult.usingTestService !== false && {
                 previewUrl: emailResult.previewUrl,
                 resetToken: resetToken,
@@ -74,8 +69,7 @@ exports.resetPassword = async (req, res) => {
     }
 
     try {
-        // Find user by valid reset token
-        const user = await User.findOne({
+          const user = await User.findOne({
             resetPasswordToken: token,
             resetPasswordExpires: { $gt: Date.now() }
         });
@@ -84,12 +78,10 @@ exports.resetPassword = async (req, res) => {
             return res.status(400).json({ message: "Invalid or expired reset token" });
         }
 
-        // Hash new password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+          const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
         
-        // Clear reset token fields
-        user.resetPasswordToken = undefined;
+         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
         
         await user.save();

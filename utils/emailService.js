@@ -1,6 +1,5 @@
 const nodemailer = require('nodemailer');
 
-// Create transporter for Gmail
 const createGmailTransporter = () => {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     throw new Error('Gmail credentials not configured. Using test email service instead.');
@@ -15,7 +14,6 @@ const createGmailTransporter = () => {
   });
 };
 
-// Create transporter for Ethereal (test service)
 const createEtherealTransporter = async () => {
   try {
     const testAccount = await nodemailer.createTestAccount();
@@ -35,7 +33,7 @@ const createEtherealTransporter = async () => {
   }
 };
 
-// Email template for password reset
+
 const createResetEmailTemplate = (resetToken, username) => {
   const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
   
@@ -81,13 +79,11 @@ const createResetEmailTemplate = (resetToken, username) => {
   `;
 };
 
-// Send password reset email (main function)
 exports.sendPasswordResetEmail = async (email, username, resetToken) => {
   let transporter;
   let usingTestService = false;
 
   try {
-    // Try Gmail first if configured
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
       try {
         transporter = createGmailTransporter();
@@ -98,7 +94,6 @@ exports.sendPasswordResetEmail = async (email, username, resetToken) => {
         usingTestService = true;
       }
     } else {
-      // Use Ethereal if no Gmail config
       transporter = await createEtherealTransporter();
       usingTestService = true;
       console.log('No Gmail config found, using test email service');
@@ -123,7 +118,7 @@ exports.sendPasswordResetEmail = async (email, username, resetToken) => {
         messageId: result.messageId,
         previewUrl: previewUrl,
         usingTestService: true,
-        resetToken: resetToken // Return token for development
+        resetToken: resetToken 
       };
     } else {
       console.log('Password reset email sent successfully to:', email);
@@ -137,7 +132,6 @@ exports.sendPasswordResetEmail = async (email, username, resetToken) => {
   } catch (error) {
     console.error('Error sending password reset email:', error);
     
-    // Provide helpful error messages
     if (error.message.includes('Invalid login')) {
       throw new Error('Email service authentication failed. Please check your email credentials.');
     } else if (error.message.includes('ENOTFOUND')) {
@@ -147,8 +141,6 @@ exports.sendPasswordResetEmail = async (email, username, resetToken) => {
     }
   }
 };
-
-// Simple function that always uses test service (for development)
 exports.sendTestEmail = async (email, username, resetToken) => {
   try {
     const transporter = await createEtherealTransporter();

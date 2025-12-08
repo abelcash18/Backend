@@ -26,14 +26,13 @@ const propertySchema = new mongoose.Schema({
         required: [true, 'City is required'],
         trim: true
     },
-    // Add latitude and longitude fields
-    latitude: {
+      latitude: {
         type: Number,
-        required: false // Make optional for existing data
+        required: false 
     },
     longitude: {
         type: Number,
-        required: false // Make optional for existing data
+        required: false 
     },
     bedroom: { 
         type: Number, 
@@ -87,7 +86,7 @@ propertySchema.index({ userId: 1 });
 propertySchema.index({ type: 1 });
 propertySchema.index({ propertyType: 1 });
 propertySchema.index({ city: 1 });
-propertySchema.index({ latitude: 1, longitude: 1 }); // Geospatial index
+propertySchema.index({ latitude: 1, longitude: 1 }); 
 
 const Property = mongoose.model('Property', propertySchema);
 module.exports = Property;

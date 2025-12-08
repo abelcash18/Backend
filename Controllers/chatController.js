@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
 
-// Use existing models from mongoose
 const Property = mongoose.models.Property || require('../models/propertyModel');
 const User = mongoose.models.User || require('../Models/userModel');
 
-// Define Chat model inline
 const messageSchema = new mongoose.Schema({
   text: {
     type: String,
@@ -64,14 +62,12 @@ const chatSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for faster queries
 chatSchema.index({ propertyId: 1, clientId: 1 });
 chatSchema.index({ ownerId: 1, lastActivity: -1 });
 chatSchema.index({ clientId: 1 });
 
 const Chat = mongoose.models.Chat || mongoose.model('Chat', chatSchema);
 
-// Start a new chat (for clients)
 exports.startChat = async (req, res) => {
   try {
     const { propertyId, clientId, clientName, initialMessage } = req.body;
@@ -82,21 +78,18 @@ exports.startChat = async (req, res) => {
       });
     }
 
-    // Verify property exists and get owner using the separate Property model
-    const property = await Property.findById(propertyId).populate('userId');
+ const property = await Property.findById(propertyId).populate('userId');
     if (!property) {
       return res.status(404).json({ message: "Property not found" });
     }
 
-    // Check if chat already exists for this client and property
     let chat = await Chat.findOne({ 
       propertyId, 
       clientId 
     });
 
     if (!chat) {
-      // Create new chat
-      chat = new Chat({
+   chat = new Chat({
         propertyId,
         ownerId: property.userId._id,
         clientId,
@@ -108,7 +101,6 @@ exports.startChat = async (req, res) => {
         }]
       });
     } else {
-      // Add message to existing chat
       chat.messages.push({
         text: initialMessage,
         senderType: 'client',
@@ -121,8 +113,7 @@ exports.startChat = async (req, res) => {
     await chat.save();
     await chat.populate('propertyId', 'title images');
 
-    // Notify owner about new chat
-    if (req.io) {
+   if (req.io) {
       req.io.to(chat.ownerId.toString()).emit('newChat', {
         chatId: chat._id,
         property: chat.propertyId,
@@ -141,7 +132,6 @@ exports.startChat = async (req, res) => {
   }
 };
 
-// Get chat for client
 exports.getClientChat = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -161,7 +151,6 @@ exports.getClientChat = async (req, res) => {
   }
 };
 
-// Send message from client
 exports.sendClientMessage = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -176,8 +165,7 @@ exports.sendClientMessage = async (req, res) => {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    // Verify client owns this chat
-    if (chat.clientId !== clientId) {
+  if (chat.clientId !== clientId) {
       return res.status(403).json({ message: "Not authorized" });
     }
 
@@ -190,7 +178,6 @@ exports.sendClientMessage = async (req, res) => {
 
     await chat.save();
 
-    // Emit real-time message to owner
     if (req.io) {
       req.io.to(chat.ownerId.toString()).emit('newMessage', {
         chatId: chat._id,
@@ -209,7 +196,6 @@ exports.sendClientMessage = async (req, res) => {
   }
 };
 
-// Get all chats for property owner
 exports.getOwnerChats = async (req, res) => {
   try {
     const ownerId = req.userId;
@@ -218,8 +204,7 @@ exports.getOwnerChats = async (req, res) => {
       .populate('propertyId', 'title images price')
       .sort({ lastActivity: -1 });
 
-    // Count unread messages for each chat
-    const chatsWithUnread = chats.map(chat => {
+  const chatsWithUnread = chats.map(chat => {
       const unreadCount = chat.messages.filter(
         msg => msg.senderType === 'client' && !msg.isRead
       ).length;
@@ -237,7 +222,6 @@ exports.getOwnerChats = async (req, res) => {
   }
 };
 
-// Get specific chat for owner
 exports.getOwnerChat = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -258,7 +242,6 @@ exports.getOwnerChat = async (req, res) => {
   }
 };
 
-// Send message from owner
 exports.sendOwnerMessage = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -301,7 +284,6 @@ exports.sendOwnerMessage = async (req, res) => {
   }
 };
 
-// Mark messages as read
 exports.markAsRead = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -312,8 +294,7 @@ exports.markAsRead = async (req, res) => {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    // Mark all client messages as read
-    chat.messages.forEach(msg => {
+ chat.messages.forEach(msg => {
       if (msg.senderType === 'client') {
         msg.isRead = true;
       }

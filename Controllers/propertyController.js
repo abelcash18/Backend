@@ -20,7 +20,6 @@ exports.addPost = async (req, res) => {
     console.log('📝 Add Post Request:', { body, tokenUserId });
     
     try {
-        // Validate required fields
         const requiredFields = ['title', 'price', 'address', 'city', 'bedroom', 'bathroom', 'type', 'propertyType'];
         for (let field of requiredFields) {
             if (!body[field]) {
@@ -29,13 +28,11 @@ exports.addPost = async (req, res) => {
             }
         }
 
-        // Ensure images is an array
-        if (!body.images || !Array.isArray(body.images) || body.images.length === 0) {
+            if (!body.images || !Array.isArray(body.images) || body.images.length === 0) {
             return res.status(400).json({ message: "At least one image is required" });
         }
 
-        // Generate mock coordinates if not provided
-        let latitude = body.latitude;
+         let latitude = body.latitude;
         let longitude = body.longitude;
         
         if (!latitude || !longitude) {
@@ -75,7 +72,6 @@ exports.addPost = async (req, res) => {
     }
 };
 
-// Helper function to generate mock coordinates based on city
 function generateMockCoordinates(city) {
     const cityCoordinates = {
         'london': { latitude: 51.5074, longitude: -0.1278 },
@@ -97,8 +93,7 @@ function generateMockCoordinates(city) {
         return cityCoordinates[normalizedCity];
     }
 
-    // Generate random coordinates within a reasonable range
-    return {
+  return {
         latitude: 51.5074 + (Math.random() - 0.5) * 0.1, // Around London area
         longitude: -0.1278 + (Math.random() - 0.5) * 0.1
     };
@@ -119,14 +114,12 @@ exports.updatePost = async (req, res) => {
             return res.status(404).json({ message: "Post not found" });
         }
 
-        // Check if user owns the post
         if (post.userId.toString() !== tokenUserId) {
             console.log('❌ Unauthorized update attempt. User:', tokenUserId, 'Post owner:', post.userId);
             return res.status(403).json({ message: "Not Authorized!" });
         }
 
-        // Ensure images is an array
-        if (body.images && (!Array.isArray(body.images) || body.images.length === 0)) {
+       if (body.images && (!Array.isArray(body.images) || body.images.length === 0)) {
             return res.status(400).json({ message: "At least one image is required" });
         }
 
@@ -144,8 +137,7 @@ exports.updatePost = async (req, res) => {
     } catch (err) {
         console.log('❌ Error updating post:', err);
         
-        // Handle validation errors
-        if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
             const messages = Object.values(err.errors).map(error => error.message);
             return res.status(400).json({ 
                 message: messages.join(', ') 
@@ -176,7 +168,6 @@ exports.getUserPosts = async (req, res) => {
     }
 };
 
-// Keep your other methods the same...
 exports.getPost = async (req, res) => {
     const id = req.params.id;
     try {

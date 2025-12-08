@@ -39,28 +39,23 @@ exports.updateUser = async (req, res) => {
 
         console.log('Update User Request:', { id, tokenUserId, body: req.body });
 
-        // Validate user ID format
-        if (!mongoose.Types.ObjectId.isValid(id)) {
+         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid user id format" });
         }
 
-        // Authorization check
-        if (id !== tokenUserId && !req.isAdmin) {
+         if (id !== tokenUserId && !req.isAdmin) {
             return res.status(403).json({ message: "Not Authorized! You can only update your own profile." });
         }
 
         const { password, avatar, username, email, ...otherInputs } = req.body;
         
-        // Build update object
-        const updateData = { ...otherInputs };
+             const updateData = { ...otherInputs };
         
-        // Only include fields that are provided
         if (username !== undefined) updateData.username = username;
         if (email !== undefined) updateData.email = email;
         if (avatar !== undefined) updateData.avatar = avatar;
         
-        // Handle password update
-        if (password && password.trim() !== '') {
+               if (password && password.trim() !== '') {
             if (password.length < 6) {
                 return res.status(400).json({ message: "Password must be at least 6 characters long" });
             }
