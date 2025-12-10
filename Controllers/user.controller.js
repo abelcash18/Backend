@@ -37,15 +37,15 @@ exports.updateUser = async (req, res) => {
         const id = req.params.id;
         const tokenUserId = req.userId;
 
-        console.log('Update User Request:', { id, tokenUserId, body: req.body });
+        // console.log('Update User Request:', { id, tokenUserId, body: req.body });
 
-         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid user id format" });
-        }
+        //  if (!mongoose.Types.ObjectId.isValid(id)) {
+        //     return res.status(400).json({ message: "Invalid user id format" });
+        // }
 
-         if (id !== tokenUserId && !req.isAdmin) {
-            return res.status(403).json({ message: "Not Authorized! You can only update your own profile." });
-        }
+        //  if (id !== tokenUserId && !req.isAdmin) {
+        //     return res.status(403).json({ message: "Not Authorized! You can only update your own profile." });
+        // }
 
         const { password, avatar, username, email, ...otherInputs } = req.body;
         
