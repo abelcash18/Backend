@@ -8,7 +8,7 @@ function verifyToken(req, res, next) {
 	jwt.verify(token, secret, (err, payload) => {
 		if (err) return res.status(403).json({ message: "Token is not valid!" });
 		req.userId = payload?.id;
-		//req.isAdmin = Boolean(payload?.isAdmin);
+		req.isAdmin = Boolean(payload?.isAdmin);
 		next();
 	});
 }

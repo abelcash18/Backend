@@ -82,7 +82,7 @@ app.use("/posts", postRoute);
 app.use("/test", testRoute);
 app.use("/api/chat", chatRoute); 
 
-app.put('/profile/update', (req, res) => {
+app.post('/profile/update', (req, res) => {
   // handle update logic
   res.send({ success: true });
 });
