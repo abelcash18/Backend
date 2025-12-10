@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 
 app.use(cors({
   origin:[" process.env.CLIENT_URL",
-"https://frontend-drab-three-53.vercel.app"],
+"https://frontend-drab-three-53.vercel.app", "https://dewgateconsults.netlify.app", "http://localhost:5173"],
  credentials:true}));
 app.use(express.json());
 app.use(cookieParser());
