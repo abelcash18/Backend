@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/",propertyController.getPosts );
 router.get("/:id",propertyController.getPost);
 router.post("/", verifyToken,propertyController.addPost);
-router.put("/:id", verifyToken, propertyController.updatePost);
+router.put("/:id", propertyController.updatePost);
 router.delete("/:id", verifyToken, propertyController.deletePost);
 router.get("/user/:userId", propertyController.getUserPosts);
 
