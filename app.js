@@ -82,10 +82,6 @@ app.use("/posts", postRoute);
 app.use("/test", testRoute);
 app.use("/api/chat", chatRoute); 
 
-app.post('/profile/update', (req, res) => {
-  // handle update logic
-  res.send({ success: true });
-});
 
 app.get('/health', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
