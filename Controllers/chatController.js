@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const Property = mongoose.models.Property || require('../models/propertyModel');
+const Property = mongoose.models.Property || require('../Models/propertyModel');
 const User = mongoose.models.User || require('../Models/userModel');
 
 const messageSchema = new mongoose.Schema({
@@ -78,9 +78,13 @@ exports.startChat = async (req, res) => {
       });
     }
 
- const property = await Property.findById(propertyId).populate('userId');
+    const property = await Property.findById(propertyId).populate('userId');
     if (!property) {
       return res.status(404).json({ message: "Property not found" });
+    }
+
+    if (!property.userId) {
+      return res.status(400).json({ message: "Property owner not found" });
     }
 
     let chat = await Chat.findOne({ 
