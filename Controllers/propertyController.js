@@ -47,7 +47,7 @@ exports.addPost = async (req, res) => {
             ...body,
             latitude,
             longitude,
-            userId: tokenUserId,
+            userId: tokenUserId || body.userId,
         });
 
         console.log('📝 Saving post to database...');
