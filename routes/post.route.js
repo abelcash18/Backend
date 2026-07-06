@@ -8,7 +8,7 @@ router.get("/", propertyController.getPosts);
 router.get("/:id", propertyController.getPost);
 
 // PASTED FIX: Added verifyToken here so req.userId becomes available
-router.post("/", verifyToken, propertyController.addPost);
+router.post("/", propertyController.addPost);
 
 // OPTIONAL FIX: You will likely need verifyToken here too so users can only update/delete their own posts
 router.put("/:id", verifyToken, propertyController.updatePost);
