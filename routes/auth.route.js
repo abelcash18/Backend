@@ -1,5 +1,4 @@
 const express = require('express');
-const authController = require('../controllers/auth.controller.js');
 const { register, login, logout } = require("../controllers/auth.controller.js");
 const { forgotPassword, resetPassword, verifyResetToken } = require("../controllers/resetPassword.js");
 
